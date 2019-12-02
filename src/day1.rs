@@ -16,13 +16,11 @@ pub fn solve() -> i32 {
 fn find_fuel_requirements(mass: i32) -> i32 {
     let fuel = (mass / 3) - 2;
     if fuel > 0 {
-        return fuel + find_fuel_requirements(fuel);
+        fuel + find_fuel_requirements(fuel)
     } else {
-        return 0;
+        0
     }
 }
-
-
 
 #[cfg(test)]
 mod tests {
