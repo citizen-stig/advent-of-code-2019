@@ -1,6 +1,7 @@
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 
 fn main() {
     println!("Day 1:");
@@ -15,9 +16,14 @@ fn main() {
         None => println!("Cannot find answer for day 2"),
     }
 
+//    println!("===============================================");
+//    println!("Day 3:");
+//    let answer_3 = day3::solve();
+//    println!("{}", answer_3);
+
     println!("===============================================");
-    println!("Day 3:");
-    let answer_3 = day3::solve();
-    println!("{}", answer_3);
+    println!("Day 4:");
+    let answer_4 = day4::solve();
+    println!("{}", answer_4)
 
 }
