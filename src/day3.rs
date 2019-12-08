@@ -53,14 +53,18 @@ impl Segment {
             } else {
                 (self.end.y, self.start.y)
             };
-            (start + 1..end).map(|y| Point::new(self.start.x, y)).collect()
+            (start + 1..end)
+                .map(|y| Point::new(self.start.x, y))
+                .collect()
         } else {
             let (start, end) = if self.start.x < self.end.x {
                 (self.start.x, self.end.x)
             } else {
                 (self.end.x, self.start.x)
             };
-            (start + 1..end).map(|x| Point::new(x, self.start.y)).collect()
+            (start + 1..end)
+                .map(|x| Point::new(x, self.start.y))
+                .collect()
         };
         points
     }
@@ -68,7 +72,7 @@ impl Segment {
     pub fn get_intersection(&self, other: &Segment) -> Option<Point> {
         match self.all_points().intersection(&other.all_points()).next() {
             None => None,
-            Some(point) => Some(point.clone())
+            Some(point) => Some(point.clone()),
         }
     }
 }
@@ -85,7 +89,6 @@ struct Path {
     distance: i32,
 }
 
-
 fn parse_wire(input: &str) -> Vec<Segment> {
     let mut start_point = Point::new(0, 0);
     let lines: Vec<Segment> = input
@@ -96,25 +99,20 @@ fn parse_wire(input: &str) -> Vec<Segment> {
                 Some("D") => Direction::D,
                 Some("L") => Direction::L,
                 Some("U") => Direction::U,
-                _ => panic!("Unknown direction at the path {}", raw_path)
+                _ => panic!("Unknown direction at the path {}", raw_path),
             };
             let distance = raw_path.get(1..).unwrap().parse::<i32>().unwrap();
-            Path { direction, distance }
+            Path {
+                direction,
+                distance,
+            }
         })
         .map(|path: Path| -> Segment {
             let end_point = match path.direction {
-                Direction::R => {
-                    Point::new(start_point.x + path.distance, start_point.y)
-                }
-                Direction::D => {
-                    Point::new(start_point.x, start_point.y - path.distance)
-                }
-                Direction::L => {
-                    Point::new(start_point.x - path.distance, start_point.y)
-                }
-                Direction::U => {
-                    Point::new(start_point.x, start_point.y + path.distance)
-                }
+                Direction::R => Point::new(start_point.x + path.distance, start_point.y),
+                Direction::D => Point::new(start_point.x, start_point.y - path.distance),
+                Direction::L => Point::new(start_point.x - path.distance, start_point.y),
+                Direction::U => Point::new(start_point.x, start_point.y + path.distance),
             };
             let line = Segment::new(&start_point, &end_point);
             start_point = end_point;
@@ -123,7 +121,6 @@ fn parse_wire(input: &str) -> Vec<Segment> {
         .collect();
     lines
 }
-
 
 // I'm not proud of this solution, it can be done much more efficient using sweep line algorithm
 // https://www.youtube.com/watch?v=dePDHVovJlE
@@ -139,14 +136,14 @@ fn find_distance_to_nearest_intersection(wire_1: Vec<Segment>, wire_2: Vec<Segme
                     if distance > 0 {
                         let actual_min_distance = match min_distance {
                             Some(actual_min_distance) => actual_min_distance,
-                            None => distance
+                            None => distance,
                         };
                         if distance <= actual_min_distance {
                             min_distance = Some(distance);
                         }
                     }
                 }
-                None => ()
+                None => (),
             }
         }
     }
@@ -285,7 +282,7 @@ mod tests {
                 Segment::new_from_coordinates(0, 0, 8, 0),
                 Segment::new_from_coordinates(8, 0, 8, 5),
                 Segment::new_from_coordinates(8, 5, 3, 5),
-                Segment::new_from_coordinates(3, 5, 3, 2)
+                Segment::new_from_coordinates(3, 5, 3, 2),
             ];
 
             assert_eq!(parse_wire(input), expected_output);
@@ -298,7 +295,7 @@ mod tests {
                 Segment::new_from_coordinates(0, 0, 0, 7),
                 Segment::new_from_coordinates(0, 7, 6, 7),
                 Segment::new_from_coordinates(6, 7, 6, 3),
-                Segment::new_from_coordinates(6, 3, 2, 3)
+                Segment::new_from_coordinates(6, 3, 2, 3),
             ];
 
             assert_eq!(parse_wire(input), expected_output);
