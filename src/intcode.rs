@@ -25,7 +25,7 @@ fn instruction_to_op_code(instruction: i32) -> OpCode {
         match param {
             0 => Mode::Position,
             1 => Mode::Immediate,
-            _ => panic!("Unknown mode for parameter 1: {:?}", params),
+            _ => panic!("An unknown mode for parameter 1: {:?}", params),
         }
     };
     match operation_code {

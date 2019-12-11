@@ -3,6 +3,7 @@
 //mod day3;
 //mod day4;
 mod day5;
+mod day6;
 mod intcode;
 
 fn main() {
@@ -32,4 +33,9 @@ fn main() {
     println!("Day 5:");
     let answer_5 = day5::solve();
     println!("{}", answer_5);
+
+    println!("===============================================");
+    println!("Day 6:");
+    let answer_6 = day6::solve();
+    println!("{}", answer_6);
 }
