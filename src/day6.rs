@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{HashMap};
 use std::collections::hash_map::Entry::{Occupied, Vacant};
 
 struct Object {
@@ -64,9 +64,7 @@ pub fn solve() -> usize {
         .map(|l| l.expect("Could not parse line"))
         .collect();
 
-
     count_orbits(&lines)
-//    3
 }
 
 #[cfg(test)]
@@ -75,21 +73,21 @@ mod tests {
 
     #[test]
     fn test_one() {
-        let lines = vec!["COM)B"];
+        let lines = vec!["COM)B".to_owned()];
 
         assert_eq!(count_orbits(&lines), 1);
     }
 
     #[test]
     fn test_two() {
-        let lines = vec!["COM)B", "COM)C"];
+        let lines = vec!["COM)B".to_owned(), "COM)C".to_owned()];
 
         assert_eq!(count_orbits(&lines), 2);
     }
 
     #[test]
     fn test_tree() {
-        let lines = vec!["COM)B", "B)C"].iter().map(|s| s.to_owned()).collect();
+        let lines = vec!["COM)B", "B)C"].iter().map(|s| String::from(*s)).collect();
 
         assert_eq!(count_orbits(&lines), 3);
     }
@@ -107,7 +105,7 @@ mod tests {
                          "D)I",
                          "E)J",
                          "J)K",
-                         "K)L", ].iter().map(|s| s.to_owned()).collect();
+                         "K)L", ].iter().map(|s| String::from(*s)).collect();
 
         assert_eq!(count_orbits(&lines), 42);
     }

@@ -66,9 +66,11 @@ fn get_actual_value(data: &[i32], mode: Mode, position: usize) -> i32 {
     }
 }
 
-pub fn program(data: &mut [i32], input: i32) -> i32 {
+pub fn program(data: &mut [i32], input: &[i32]) -> i32 {
     let mut output = 0;
     let mut position = 0;
+
+    let mut input_idx = 0;
 
     loop {
         let operation_code = instruction_to_op_code(data[position]);
@@ -119,7 +121,7 @@ pub fn program(data: &mut [i32], input: i32) -> i32 {
             }
             OpCode::Save(_) => {
                 let destination = data[position + 1] as usize;
-                data[destination] = input;
+                data[destination] = input[0];
                 position += 2
             }
             OpCode::Output(mode) => {
@@ -176,7 +178,7 @@ mod tests {
     fn test_sum() {
         let mut data = vec![1, 0, 0, 0, 99];
         let expected_output = vec![2, 0, 0, 0, 99];
-        let output = program(&mut data, 0);
+        let output = program(&mut data, &vec![0]);
         assert_eq!(data, expected_output)
     }
 
@@ -184,7 +186,7 @@ mod tests {
     fn test_multiply() {
         let mut data = vec![2, 3, 0, 3, 99];
         let expected_output = vec![2, 3, 0, 6, 99];
-        program(&mut data, 0);
+        program(&mut data, &vec![0]);
         assert_eq!(data, expected_output)
     }
 
@@ -192,7 +194,7 @@ mod tests {
     fn test_store_after() {
         let mut data = vec![2, 4, 4, 5, 99, 0];
         let expected_output = vec![2, 4, 4, 5, 99, 9801];
-        program(&mut data, 0);
+        program(&mut data, &vec![0]);
         assert_eq!(data, expected_output)
     }
 
@@ -200,15 +202,15 @@ mod tests {
     fn test_two_operations() {
         let mut data = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
         let expected_output = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
-        program(&mut data, 0);
+        program(&mut data, &vec![0]);
         assert_eq!(data, expected_output)
     }
 
     #[test]
     fn test_just_with_input() {
         let mut data = vec![3, 0, 4, 0, 99];
-        let input = 31337;
+        let input = &vec![31337];
         let output = program(&mut data, input);
-        assert_eq!(input, output);
+        assert_eq!(31337, output);
     }
 }

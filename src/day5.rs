@@ -9,7 +9,7 @@ pub fn solve() -> i32 {
         .split(',')
         .map(|number| number.parse::<i32>().unwrap())
         .collect();
-    let output = intcode::program(&mut original_input, 5);
+    let output = intcode::program(&mut original_input, &vec![5]);
     output
 }
 
