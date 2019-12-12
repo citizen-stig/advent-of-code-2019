@@ -20,10 +20,10 @@ enum OpCode {
 }
 
 
-fn instruction_to_op_code(instruction: i32) -> OpCode {
+fn instruction_to_op_code(instruction: i64) -> OpCode {
     let operation_code = instruction % 100;
     let params = instruction / 100;
-    let match_mode = |param: i32| {
+    let match_mode = |param: i64| {
         match param {
             0 => Mode::Position,
             1 => Mode::Immediate,
@@ -61,27 +61,29 @@ fn instruction_to_op_code(instruction: i32) -> OpCode {
     }
 }
 
-fn get_actual_value(data: &[i32], mode: Mode, position: usize) -> i32 {
+fn get_actual_value(data: &[i64], mode: Mode, position: usize) -> i64 {
     match mode {
         Mode::Position => data[data[position] as usize].clone(),
         Mode::Immediate => data[position].clone(),
     }
 }
 
-pub fn read_input(filename: &str) -> Vec<i32> {
+pub fn read_input(filename: &str) -> Vec<i64> {
     let contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
     contents
         .split(',')
-        .map(|number| number.parse::<i32>().unwrap())
+        .map(|number| number.parse::<i64>().unwrap())
         .collect()
 }
 
-pub fn program(data: &mut [i32], input: &[i32]) -> i32 {
-    let mut output = 0;
-    let mut position = 0;
+pub enum ProgramResult {
+    Halt,
+    Output(i64, usize),   // data, position
+}
 
-    let mut input_idx = 0;
-
+pub fn program<F>(data: &mut [i64], mut input: F, position: Option<usize>) -> ProgramResult where
+    F: FnMut() -> i64 {
+    let mut position = position.unwrap_or(0);
     loop {
         let operation_code = instruction_to_op_code(data[position]);
         match operation_code {
@@ -131,18 +133,17 @@ pub fn program(data: &mut [i32], input: &[i32]) -> i32 {
             }
             OpCode::Save(_) => {
                 let destination = data[position + 1] as usize;
-                data[destination] = input[input_idx];
-                input_idx += 1;
+                data[destination] = input();
                 position += 2
             }
             OpCode::Output(mode) => {
-                output = get_actual_value(&data, mode, position + 1);
-                position += 2
+                let output = get_actual_value(&data, mode, position + 1);
+                position += 2;
+                return ProgramResult::Output(output, position);
             }
-            OpCode::Halt => break,
+            OpCode::Halt => return ProgramResult::Halt,
         }
     }
-    output
 }
 
 #[cfg(test)]
@@ -189,7 +190,7 @@ mod tests {
     fn test_sum() {
         let mut data = vec![1, 0, 0, 0, 99];
         let expected_output = vec![2, 0, 0, 0, 99];
-        let output = program(&mut data, &vec![0]);
+        let _output = program(&mut data, ||0);
         assert_eq!(data, expected_output)
     }
 
@@ -197,7 +198,7 @@ mod tests {
     fn test_multiply() {
         let mut data = vec![2, 3, 0, 3, 99];
         let expected_output = vec![2, 3, 0, 6, 99];
-        program(&mut data, &vec![0]);
+        program(&mut data, ||0);
         assert_eq!(data, expected_output)
     }
 
@@ -205,7 +206,7 @@ mod tests {
     fn test_store_after() {
         let mut data = vec![2, 4, 4, 5, 99, 0];
         let expected_output = vec![2, 4, 4, 5, 99, 9801];
-        program(&mut data, &vec![0]);
+        program(&mut data, ||0);
         assert_eq!(data, expected_output)
     }
 
@@ -213,15 +214,15 @@ mod tests {
     fn test_two_operations() {
         let mut data = vec![1, 1, 1, 4, 99, 5, 6, 0, 99];
         let expected_output = vec![30, 1, 1, 4, 2, 5, 6, 0, 99];
-        program(&mut data, &vec![0]);
+        program(&mut data, ||0);
         assert_eq!(data, expected_output)
     }
 
     #[test]
     fn test_just_with_input() {
         let mut data = vec![3, 0, 4, 0, 99];
-        let input = &vec![31337];
+        let input = ||31337;
         let output = program(&mut data, input);
-        assert_eq!(31337, output);
+        assert_eq!(31337, output.unwrap());
     }
 }
