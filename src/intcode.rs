@@ -1,3 +1,5 @@
+use std::fs;
+
 #[derive(Debug, PartialEq)]
 enum Mode {
     Position,
@@ -66,6 +68,14 @@ fn get_actual_value(data: &[i32], mode: Mode, position: usize) -> i32 {
     }
 }
 
+pub fn read_input(filename: &str) -> Vec<i32> {
+    let contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
+    contents
+        .split(',')
+        .map(|number| number.parse::<i32>().unwrap())
+        .collect()
+}
+
 pub fn program(data: &mut [i32], input: &[i32]) -> i32 {
     let mut output = 0;
     let mut position = 0;
@@ -121,7 +131,8 @@ pub fn program(data: &mut [i32], input: &[i32]) -> i32 {
             }
             OpCode::Save(_) => {
                 let destination = data[position + 1] as usize;
-                data[destination] = input[0];
+                data[destination] = input[input_idx];
+                input_idx += 1;
                 position += 2
             }
             OpCode::Output(mode) => {

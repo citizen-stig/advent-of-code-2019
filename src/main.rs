@@ -1,10 +1,14 @@
+extern crate permutohedron;
+
+mod intcode;
 //mod day1;
 //mod day2;
 //mod day3;
 //mod day4;
 mod day5;
 mod day6;
-mod intcode;
+mod day7;
+
 
 fn main() {
 //    println!("Day 1:");
@@ -38,4 +42,9 @@ fn main() {
     println!("Day 6:");
     let answer_6 = day6::solve();
     println!("{}", answer_6);
+
+    println!("===============================================");
+    println!("Day 7:");
+    let answer_7 = day7::solve();
+    println!("{}", answer_7);
 }

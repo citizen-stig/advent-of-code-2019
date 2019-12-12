@@ -1,14 +1,8 @@
-use std::fs;
-
 use crate::intcode;
 
 pub fn solve() -> i32 {
     let filename = "input/day5.txt";
-    let contents = fs::read_to_string(filename).expect("Something went wrong reading the file");
-    let mut original_input: Vec<i32> = contents
-        .split(',')
-        .map(|number| number.parse::<i32>().unwrap())
-        .collect();
+    let mut original_input: Vec<i32> = intcode::read_input(filename);
     let output = intcode::program(&mut original_input, &vec![5]);
     output
 }

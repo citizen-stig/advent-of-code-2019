@@ -59,7 +59,7 @@ pub fn solve() -> usize {
     let file = File::open(filename).unwrap();
     let reader = BufReader::new(file);
 
-    let mut lines: Vec<String> = reader
+    let lines: Vec<String> = reader
         .lines()
         .map(|l| l.expect("Could not parse line"))
         .collect();
